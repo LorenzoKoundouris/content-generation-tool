@@ -8,7 +8,7 @@ function YouTube() {
 
   useEffect(() => {
     //Validate the tweet with a regex
-    setPayload(`<p name=video>${youTubeEmbed}</p>`);
+    setPayload(`<p name="video">${youTubeEmbed}</p>`);
   }, [youTubeEmbed]);
 
   const handleChange = (evt: any) => {

@@ -8,7 +8,7 @@ function Twitter() {
 
   useEffect(() => {
     //Validate the tweet with a regex
-    setPayload(`<p tweet=${twitterURL}></p>`);
+    setPayload(`<p tweet="${twitterURL}"></p>`);
   }, [twitterURL]);
 
   const handleChange = (evt: any) => {
