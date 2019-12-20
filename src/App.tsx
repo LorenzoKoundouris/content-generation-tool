@@ -16,15 +16,15 @@ function App() {
 
   return (
     <Container>
-      <Header>
+      <Header>{/* place OC header */}</Header>
+      <Body>
         <h1>Content Generation Tool (Beta)</h1>
         <ContentTypeSelector
           value={selectedOption}
           handleChange={handleChange}
         />
-      </Header>
-      <Body>
-        {selectedOption && <ContentForm type={selectedOption.value} />}
+        {/* {selectedOption && <ContentForm type={selectedOption.value} />} */}
+        <ContentForm type={"tipster"} />
       </Body>
     </Container>
   );

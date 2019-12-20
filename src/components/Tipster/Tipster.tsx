@@ -3,6 +3,7 @@ import React from "react";
 import Row from "../Row";
 import Preview from "../Preview";
 import { ErrorMessage, Separator } from "./Tipster.styles";
+import { INPUT } from "../../utils/constants";
 
 interface InputField {
   value: string | number;
@@ -78,141 +79,32 @@ class Tipster extends React.Component<any, IAppState> {
     };
   }
 
-  // Tipster details section
-  private handleNameChange = (evt: any) => {
-    this.setState(
+  private handleDetailChange = (key: string, changedDetail: string) => {
+    this.setState<never>(
       {
-        fullName: {
-          value: evt.currentTarget.value,
-          isValid: !!evt.currentTarget.value
+        [key]: {
+          value: changedDetail,
+          isValid: !!changedDetail
         }
       },
       this.validateForm
     );
   };
 
-  private handleSocialMediaURLChange = (evt: any) => {
-    this.setState(
-      {
-        socialMediaURL: {
-          value: evt.currentTarget.value,
-          isValid: !!evt.currentTarget.value
-        }
-      },
-      this.validateForm
-    );
-  };
+  private handleStatChange = (key: string, changedStat: string) => {
+    const updatedStats = Object.assign(this.state.stats, {
+      [key]: {
+        value: changedStat,
+        isValid: !!changedStat
+      }
+    });
 
-  private handleUsernameChange = (evt: any) => {
-    this.setState(
-      {
-        username: {
-          value: evt.currentTarget.value,
-          isValid: !!evt.currentTarget.value
-        }
-      },
-      this.validateForm
-    );
-  };
-
-  private handleAvatarURLChange = (evt: any) => {
-    this.setState(
-      {
-        avatarURL: {
-          value: evt.currentTarget.value,
-          isValid: !!evt.currentTarget.value
-        }
-      },
-      this.validateForm
-    );
-  };
-
-  private handleBioChange = (evt: any) => {
-    this.setState(
-      {
-        bio: {
-          value: evt.currentTarget.value,
-          isValid: !!evt.currentTarget.value
-        }
-      },
-      this.validateForm
-    );
-  };
-
-  // Stats section
-  private updateStats = (updatedStats: IStats) => {
-    this.setState(
+    this.setState<never>(
       {
         stats: updatedStats
       },
       this.validateForm
     );
-  };
-
-  private handleStatsDateChange = (evt: any) => {
-    const updatedStats = Object.assign(this.state.stats, {
-      date: {
-        value: evt.currentTarget.value,
-        isValid: !!evt.currentTarget.value
-      }
-    });
-
-    this.updateStats(updatedStats);
-  };
-
-  private handleStatsWinsChange = (evt: any) => {
-    const updatedStats = Object.assign(this.state.stats, {
-      wins: {
-        value: Number(evt.currentTarget.value),
-        isValid: !!evt.currentTarget.value
-      }
-    });
-
-    this.updateStats(updatedStats);
-  };
-
-  private handleStatsLossesChange = (evt: any) => {
-    const updatedStats = Object.assign(this.state.stats, {
-      losses: {
-        value: Number(evt.currentTarget.value),
-        isValid: !!evt.currentTarget.value
-      }
-    });
-
-    this.updateStats(updatedStats);
-  };
-
-  private handleStatsPushChange = (evt: any) => {
-    const updatedStats = Object.assign(this.state.stats, {
-      push: {
-        value: Number(evt.currentTarget.value),
-        isValid: !!evt.currentTarget.value
-      }
-    });
-
-    this.updateStats(updatedStats);
-  };
-
-  private handleStatsROIChange = (evt: any) => {
-    const updatedStats = Object.assign(this.state.stats, {
-      roi: {
-        value: evt.currentTarget.value,
-        isValid: !!evt.currentTarget.value
-      }
-    });
-
-    this.updateStats(updatedStats);
-  };
-
-  private handleStatChange = (evt: any) => {
-    const updatedStats = Object.assign(this.state.stats, {
-      [evt.currentTarget.name]: {
-        value: evt.currentTarget.value,
-        isValid: !!evt.currentTarget.value
-      }
-    });
-
-    this.updateStats(updatedStats);
   };
 
   private validateForm = () => {
@@ -266,84 +158,92 @@ class Tipster extends React.Component<any, IAppState> {
       stats,
       payload
     } = this.state;
+
     return (
-      <div>
-        <div className="inputs">
-          <Row
-            label="Full name"
-            changeHandler={this.handleNameChange}
-            isValid={fullName.isValid}
-            placeholder="Ben Rolfe"
-            value={fullName.value}
-          />
-          <Row
-            label="Social media URL"
-            changeHandler={this.handleSocialMediaURLChange}
-            isValid={socialMediaURL.isValid}
-            placeholder="https://twitter.com/benrolfe15"
-            value={socialMediaURL.value}
-          />
-          <Row
-            label="Username"
-            changeHandler={this.handleUsernameChange}
-            isValid={username.isValid}
-            placeholder="@benrolfe15"
-            value={username.value}
-          />
-          <Row
-            label="Avatar URL"
-            changeHandler={this.handleAvatarURLChange}
-            isValid={avatarURL.isValid}
-            placeholder="https://pbs.twimg.com/profile_images/1176747891563667458/PyTXtfBl_400x400.jpg"
-            value={avatarURL.value}
-          />
-          <Row
-            label="Bio"
-            changeHandler={this.handleBioChange}
-            isValid={bio.isValid}
-            placeholder="Head of NFL Content - The Touchdown NFL, Editor at Pro Football Network and RotoBaller. Writer at Oddschecker US, Pro Football Network."
-            value={bio.value}
-          />
-          <Separator />
-          <Row
-            label="Date"
-            changeHandler={this.handleStatsDateChange}
-            isValid={stats.date.isValid}
-            placeholder="Nov 2019"
-            value={stats.date.value}
-          />
-          <Row
-            label="Wins"
-            changeHandler={this.handleStatsWinsChange}
-            isValid={stats.wins.isValid}
-            type="number"
-            placeholder="23"
-            value={stats.wins.value}
-          />
-          <Row
-            label="Losses"
-            changeHandler={this.handleStatsLossesChange}
-            isValid={stats.losses.isValid}
-            type="number"
-            placeholder="5"
-            value={stats.losses.value}
-          />
-          <Row
-            label="Push"
-            changeHandler={this.handleStatsPushChange}
-            isValid={stats.push.isValid}
-            type="number"
-            placeholder="1"
-            value={stats.push.value}
-          />
-          <Row
-            label="ROI"
-            changeHandler={this.handleStatsROIChange}
-            isValid={stats.roi.isValid}
-            placeholder="22.2%"
-            value={stats.roi.value}
-          />
-        </div>
+      <>
+        <Row
+          component={INPUT}
+          label="Full name"
+          changeHandler={value => this.handleDetailChange("fullName", value)}
+          isValid={fullName.isValid}
+          placeholder="Ben Rolfe"
+          value={fullName.value}
+        />
+        <Row
+          component={INPUT}
+          label="Social media URL"
+          changeHandler={value =>
+            this.handleDetailChange("socialMediaURL", value)
+          }
+          isValid={socialMediaURL.isValid}
+          placeholder="https://twitter.com/benrolfe15"
+          value={socialMediaURL.value}
+        />
+        <Row
+          component={INPUT}
+          label="Username"
+          changeHandler={value => this.handleDetailChange("username", value)}
+          isValid={username.isValid}
+          placeholder="@benrolfe15"
+          value={username.value}
+        />
+        <Row
+          component={INPUT}
+          label="Avatar URL"
+          changeHandler={value => this.handleDetailChange("avatarURL", value)}
+          isValid={avatarURL.isValid}
+          placeholder="https://pbs.twimg.com/profile_images/1176747891563667458/PyTXtfBl_400x400.jpg"
+          value={avatarURL.value}
+        />
+        <Row
+          component={INPUT}
+          label="Bio"
+          changeHandler={value => this.handleDetailChange("bio", value)}
+          isValid={bio.isValid}
+          placeholder="Head of NFL Content - The Touchdown NFL, Editor at Pro Football Network and RotoBaller. Writer at Oddschecker US, Pro Football Network."
+          value={bio.value}
+        />
+        <Separator />
+        <Row
+          component={INPUT}
+          label="Date"
+          changeHandler={value => this.handleStatChange("date", value)}
+          isValid={stats.date.isValid}
+          placeholder="Nov 2019"
+          value={stats.date.value}
+        />
+        <Row
+          component={INPUT}
+          label="Wins"
+          changeHandler={value => this.handleStatChange("wins", value)}
+          isValid={stats.wins.isValid}
+          type="number"
+          value={stats.wins.value}
+        />
+        <Row
+          component={INPUT}
+          label="Losses"
+          changeHandler={value => this.handleStatChange("losses", value)}
+          isValid={stats.losses.isValid}
+          type="number"
+          value={stats.losses.value}
+        />
+        <Row
+          component={INPUT}
+          label="Push"
+          changeHandler={value => this.handleStatChange("push", value)}
+          isValid={stats.push.isValid}
+          type="number"
+          value={stats.push.value}
+        />
+        <Row
+          component={INPUT}
+          label="ROI"
+          changeHandler={value => this.handleStatChange("roi", value)}
+          isValid={stats.roi.isValid}
+          placeholder="22.2%"
+          value={stats.roi.value}
+        />
 
         {!payload && (
           <ErrorMessage>
@@ -352,7 +252,7 @@ class Tipster extends React.Component<any, IAppState> {
         )}
 
         <Preview value={payload} />
-      </div>
+      </>
     );
   }
 }

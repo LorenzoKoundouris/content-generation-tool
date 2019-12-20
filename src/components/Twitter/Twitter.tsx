@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Row from "../Row";
 import Preview from "../Preview";
+import { INPUT } from "../../utils/constants";
 
 function Twitter() {
   const [twitterURL, setTwitterURL] = useState("");
@@ -11,16 +12,13 @@ function Twitter() {
     setPayload(`<p tweet="${twitterURL}"></p>`);
   }, [twitterURL]);
 
-  const handleChange = (evt: any) => {
-    setTwitterURL(evt.currentTarget.value);
-  };
-
   return (
     <div>
       <Row
+        component={INPUT}
         label="Twitter URL"
-        changeHandler={handleChange}
-        isValid
+        changeHandler={setTwitterURL}
+        isValid={!!twitterURL}
         placeholder="https://twitter.com/OddscheckerUS/status/1207625525029752833"
         value={twitterURL}
       />

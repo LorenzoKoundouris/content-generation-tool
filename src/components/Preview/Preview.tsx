@@ -1,17 +1,40 @@
 import React from "react";
-import { PreviewContainer, StyledTextArea } from "./Preview.styles";
+import { PreviewContainer, Content } from "./Preview.styles";
+import { StyledButton } from "../common/button/Button.styles";
+import { StyledTextArea } from "../common/TextArea/TextArea.styles";
 
 interface IPreviewProps {
   value: string;
 }
 
-function Preview({ value }: IPreviewProps) {
-  return (
-    <PreviewContainer>
-      <h2>Preview</h2>
-      <StyledTextArea value={value} rows={10} readOnly />
-    </PreviewContainer>
-  );
+class Preview extends React.Component<IPreviewProps> {
+  constructor(props: IPreviewProps) {
+    super(props);
+    this.state = { clipboardText: "" };
+  }
+
+  private updateClipboard(clipboardText: string) {
+    navigator.clipboard.writeText(clipboardText).then(
+      e => console.log("clipboard successfully set", e),
+      e => console.log("clipboard write failed", e)
+    );
+  }
+
+  public render(): JSX.Element {
+    const { value } = this.props;
+
+    return (
+      <PreviewContainer>
+        <h2>Preview</h2>
+        <Content>
+          <StyledTextArea value={value} rows={10} readOnly />
+          <StyledButton onClick={() => this.updateClipboard(value)}>
+            Copy
+          </StyledButton>
+        </Content>
+      </PreviewContainer>
+    );
+  }
 }
 
 export default Preview;
