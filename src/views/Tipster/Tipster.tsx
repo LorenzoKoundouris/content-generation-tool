@@ -1,7 +1,7 @@
 import React from "react";
 
-import Row from "../Row";
-import Preview from "../Preview";
+import Row from "../../components/Row";
+import Preview from "../../components/Preview";
 import { ErrorMessage, Separator } from "./Tipster.styles";
 import { INPUT } from "../../utils/constants";
 
