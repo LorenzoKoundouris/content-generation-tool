@@ -3,7 +3,7 @@ import { StyledTextArea } from "./TextArea.styles";
 
 interface ITextAreaProps {
   className?: string;
-  onChange?: (evt: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   readOnly?: boolean;
   rows?: number;
   value: string | number;

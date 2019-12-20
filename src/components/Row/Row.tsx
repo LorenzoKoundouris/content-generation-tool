@@ -43,9 +43,9 @@ class Row extends React.Component<IRowInputProps | IRowTextAreaProps> {
     return (
       <Component
         className={className}
-        onChange={(evt: React.ChangeEvent<HTMLInputElement>) =>
-          changeHandler(evt.currentTarget.value)
-        }
+        onChange={(
+          evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        ) => changeHandler(evt.currentTarget.value)}
         {...otherProps}
       />
     );
