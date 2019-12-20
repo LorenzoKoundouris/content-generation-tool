@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-
-import { Container, Header, Body } from "./App.styles";
+import { Container, Body } from "./App.styles";
 import ContentTypeSelector from "./components/ContentTypeSelector";
 import IReactSelectItem from "./interfaces/i-react-select-item";
 import ContentForm from "./components/ContentForm/ContentForm";
+import Header from "./components/Header";
 
 function App() {
   const [selectedOption, setSelectedOption] = useState<IReactSelectItem | null>(
@@ -16,7 +16,7 @@ function App() {
 
   return (
     <Container>
-      <Header>{/* place OC header */}</Header>
+      <Header />
       <Body>
         <h1>Content Generation Tool (Beta)</h1>
         <ContentTypeSelector
