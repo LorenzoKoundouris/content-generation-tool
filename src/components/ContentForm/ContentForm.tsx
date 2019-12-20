@@ -1,9 +1,9 @@
 import React from "react";
 import { TIPSTER, TWITTER, YOUTUBE } from "../../utils/constants";
 import { ContentType } from "../../types/ContentType";
-import Tipster from "../Tipster";
-import Twitter from "../Twitter";
-import YouTube from "../YouTube";
+import Tipster from "../../views/Tipster";
+import Twitter from "../../views/Twitter";
+import YouTube from "../../views/YouTube";
 
 interface IContentFormProps {
   type: ContentType;

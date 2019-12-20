@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import Row from "../Row";
-import Preview from "../Preview";
+import Row from "../../components/Row";
+import Preview from "../../components/Preview";
 import { INPUT } from "../../utils/constants";
 
 function Twitter() {
