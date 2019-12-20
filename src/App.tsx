@@ -23,8 +23,7 @@ function App() {
           value={selectedOption}
           handleChange={handleChange}
         />
-        {/* {selectedOption && <ContentForm type={selectedOption.value} />} */}
-        <ContentForm type={"tipster"} />
+        {selectedOption && <ContentForm type={selectedOption.value} />}
       </Body>
     </Container>
   );
