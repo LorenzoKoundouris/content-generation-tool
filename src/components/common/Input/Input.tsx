@@ -3,7 +3,7 @@ import { StyledInput } from "./Input.styles";
 
 interface IInputProps {
   className?: string;
-  onChange?: (evt: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   type?: "text" | "number";
   value: string | number;
 }
