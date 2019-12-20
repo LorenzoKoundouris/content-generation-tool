@@ -8,5 +8,5 @@ export const ErrorMessage = styled.p`
 `;
 
 export const Separator = styled.hr`
-  width: 75%;
+  margin: 20px 0;
 `;

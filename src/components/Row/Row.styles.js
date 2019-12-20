@@ -5,18 +5,12 @@ export const StyledRow = styled.div`
   margin: 10px 0;
 
   p {
-    display: flex;
-    flex-grow: 1;
-    justify-content: flex-end;
-    align-items: center;
-    margin-right: 10px;
+    min-width: 130px;
   }
 
-  input {
-    width: 75%;
-    font-size: 16px;
-    padding: 0 5px;
-    border-radius: 5px;
+  input,
+  textarea {
+    margin: 0 10px;
 
     &.error {
       border-color: red;

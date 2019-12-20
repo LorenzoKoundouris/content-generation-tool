@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Row from "../Row";
 import Preview from "../Preview";
+import { TEXT_AREA } from "../../utils/constants";
 
 function YouTube() {
   const [youTubeEmbed, setYouTubeEmbed] = useState("");
@@ -11,18 +12,16 @@ function YouTube() {
     setPayload(`<p name="video">${youTubeEmbed}</p>`);
   }, [youTubeEmbed]);
 
-  const handleChange = (evt: any) => {
-    setYouTubeEmbed(evt.currentTarget.value);
-  };
-
   return (
     <div>
       <Row
+        component={TEXT_AREA}
         label="YouTube Embed Code"
-        changeHandler={handleChange}
-        isValid
+        changeHandler={setYouTubeEmbed}
+        isValid={!!youTubeEmbed}
         placeholder='<iframe width="560" height="315" src="https://www.youtube.com/embed/mFh9c6BMeVk?start=2" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
         value={youTubeEmbed}
+        rows={5}
       />
 
       <Preview value={payload} />

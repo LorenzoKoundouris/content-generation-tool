@@ -1,3 +1,5 @@
 export const TIPSTER = "tipster";
 export const TWITTER = "twitter";
 export const YOUTUBE = "youtube";
+export const INPUT = "input";
+export const TEXT_AREA = "textarea";

@@ -1,29 +1,64 @@
-import * as React from "react";
+import React from "react";
 import { StyledRow } from "./Row.styles";
+import { StyledButton } from "../common/button/Button.styles";
+import { TEXT_AREA } from "../../utils/constants";
+import TextArea from "../common/TextArea";
+import Input from "../common/Input";
 
-interface IRowProps {
-  label: string;
-  changeHandler: (evt: any) => void;
+interface IRowGenericProps {
+  component: ComponentType;
+  changeHandler: (changedValue: string) => void;
   isValid: boolean;
-  type?: "text" | "number";
+  label: string;
   placeholder?: string;
   value: string | number;
 }
 
-class Row extends React.Component<IRowProps> {
-  public render() {
-    const { label, changeHandler, isValid, value, ...otherProps } = this.props;
-    if (isValid) console.log(`${label} is invalid`);
+interface IRowInputProps extends IRowGenericProps {
+  component: "input";
+  type?: "text" | "number";
+}
+
+interface IRowTextAreaProps extends IRowGenericProps {
+  component: "textarea";
+  rows?: number;
+}
+
+type ComponentType = "input" | "textarea";
+
+class Row extends React.Component<IRowInputProps | IRowTextAreaProps> {
+  private pasteFromClipboard = (): void => {
+    const { changeHandler, value } = this.props;
+
+    navigator.clipboard.readText().then(clipboardText => {
+      changeHandler(`${value}${clipboardText}`);
+    });
+  };
+
+  private getComponentByType() {
+    const { component, changeHandler, isValid, ...otherProps } = this.props;
+    const className = isValid ? "" : "error";
+    const Component = component === TEXT_AREA ? TextArea : Input;
+
+    return (
+      <Component
+        className={className}
+        onChange={(evt: React.ChangeEvent<HTMLInputElement>) =>
+          changeHandler(evt.currentTarget.value)
+        }
+        {...otherProps}
+      />
+    );
+  }
+
+  public render(): JSX.Element {
+    const { label } = this.props;
 
     return (
       <StyledRow>
         <p>{label}</p>
-        <input
-          className={`value-input ${!isValid && "error"}`}
-          onChange={changeHandler}
-          value={value}
-          {...otherProps}
-        />
+        {this.getComponentByType()}
+        <StyledButton onClick={this.pasteFromClipboard}>Paste</StyledButton>
       </StyledRow>
     );
   }
