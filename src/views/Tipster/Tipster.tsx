@@ -1,260 +1,212 @@
 import React from "react";
 
-import Row from "../../components/Row";
-import Preview from "../../components/Preview";
-import { ErrorMessage, Separator } from "./Tipster.styles";
-import { INPUT } from "../../utils/constants";
-
-interface InputField {
-  value: string | number;
-  isValid: boolean;
-}
-
-interface IStats {
-  date: InputField;
-  wins: InputField;
-  losses: InputField;
-  push: InputField;
-  roi: InputField;
-}
+// import Preview from "../../components/Preview";
+import {
+  ErrorMessage,
+  ConfigGrid,
+  StatsGrid,
+  GridHeader,
+  Separator,
+  GridCell
+} from "./Tipster.styles";
+import GenericSelector from "../../components/GenericSelector";
+import IReactSelectItem from "../../interfaces/i-react-select-item";
+import { ITipster } from "../../interfaces/i-tipster";
 
 interface IAppState {
-  fullName: InputField;
-  socialMediaURL: InputField;
-  username: InputField;
-  avatarURL: InputField;
-  bio: InputField;
-  stats: IStats;
-  payload: string;
+  // stats: IStats[];
+  // payload: string;
+  tipsters: ITipster[];
+  selectedEnv: IReactSelectItem | null;
+  selectedRepub: IReactSelectItem | null;
+  selectedTipster: IReactSelectItem | null;
 }
+
+const environments = [
+  { value: "local", label: "LOCAL" },
+  { value: "dev", label: "DEV" },
+  { value: "stg", label: "STG" },
+  { value: "prod", label: "PROD" }
+];
+
+const repubs = [
+  { value: "us", label: "US" },
+  { value: "it", label: "IT" },
+  { value: "es", label: "ES" },
+  { value: "au", label: "AU" }
+];
+
+enum ENV_URL {
+  local = "http://localhost:8092/us/show-all-tipsters-data",
+  dev = "https://www.dev.occloud.io/{repub}/show-all-tipsters-data",
+  stg = "https://www.stg.occloud.io/{repub}/show-all-tipsters-data",
+  prod = "https://www.oddschecker.com/{repub}/show-all-tipsters-data"
+}
+
+const mockTipsters = [
+  {
+    name: "John Doe",
+    authorId: "1",
+    stats: JSON.parse(
+      '[{"date":"2019-10-01","wins":21,"losses":5,"push":1,"roi":"22.2%"},{"date":"2019-09-01","wins":20,"losses":4,"push":1,"roi":"21.2%"},{"date":"2019-08-01","wins":19,"losses":3,"push":1,"roi":"20.2%"}]'
+    )
+  },
+  {
+    name: "Aleksandra Marszalek",
+    authorId: "666",
+    stats: JSON.parse(
+      '[{"date":"2019-10-01","wins":21,"losses":5,"push":1,"roi":"22.2%"},{"date":"2019-09-01","wins":20,"losses":4,"push":1,"roi":"21.2%"},{"date":"2019-08-01","wins":19,"losses":3,"push":1,"roi":"20.2%"}]'
+    )
+  },
+  {
+    name: "Ryan Elliott",
+    authorId: "614",
+    stats: JSON.parse(
+      '[{"date":"2019-10-01","wins":21,"losses":5,"push":1,"roi":"22.2%"},{"date":"2019-09-01","wins":20,"losses":4,"push":1,"roi":"21.2%"},{"date":"2019-08-01","wins":19,"losses":3,"push":1,"roi":"20.2%"}]'
+    )
+  }
+];
 
 class Tipster extends React.Component<any, IAppState> {
   constructor(props: any) {
     super(props);
 
     this.state = {
-      fullName: {
-        value: "",
-        isValid: false
-      },
-      socialMediaURL: {
-        value: "",
-        isValid: false
-      },
-      username: {
-        value: "",
-        isValid: false
-      },
-      avatarURL: {
-        value: "",
-        isValid: false
-      },
-      stats: {
-        date: {
-          value: "",
-          isValid: false
-        },
-        wins: {
-          value: 0,
-          isValid: false
-        },
-        losses: {
-          value: 0,
-          isValid: false
-        },
-        push: {
-          value: 0,
-          isValid: false
-        },
-        roi: {
-          value: "",
-          isValid: false
-        }
-      },
-      bio: {
-        value: "",
-        isValid: false
-      },
-      payload: ""
+      tipsters: mockTipsters,
+      selectedEnv: { value: "dev", label: "DEV" },
+      selectedRepub: { value: "us", label: "US" },
+      selectedTipster: this.tipsterToSelectOption(mockTipsters[1])
+      // tipsters: [],
+      // selectedEnv: null,
+      // selectedRepub: null,
+      // selectedTipster: null
     };
   }
 
-  private handleDetailChange = (key: string, changedDetail: string) => {
-    this.setState<never>(
-      {
-        [key]: {
-          value: changedDetail,
-          isValid: !!changedDetail
-        }
-      },
-      this.validateForm
-    );
-  };
+  private fetchTipsters = () => {
+    const { selectedEnv: envOption, selectedRepub: repubOption } = this.state;
+    if (!envOption || !repubOption) {
+      return;
+    }
 
-  private handleStatChange = (key: string, changedStat: string) => {
-    const updatedStats = Object.assign(this.state.stats, {
-      [key]: {
-        value: changedStat,
-        isValid: !!changedStat
-      }
-    });
-
-    this.setState<never>(
-      {
-        stats: updatedStats
-      },
-      this.validateForm
-    );
-  };
-
-  private validateForm = () => {
-    const {
-      fullName,
-      socialMediaURL,
-      username,
-      avatarURL,
-      bio,
-      stats: { date, wins, losses, push, roi }
-    } = this.state;
-    const isValidForm =
-      fullName.isValid &&
-      socialMediaURL.isValid &&
-      username.isValid &&
-      avatarURL.isValid &&
-      bio.isValid &&
-      date.isValid &&
-      wins.isValid &&
-      losses.isValid &&
-      push.isValid &&
-      roi.isValid;
-
+    //mock
     this.setState({
-      payload: isValidForm
-        ? `<p name="tipster">${JSON.stringify({
-            fullName: fullName.value,
-            socialMediaURL: socialMediaURL.value,
-            username: username.value,
-            avatarURL: avatarURL.value,
-            bio: bio.value,
-            stats: {
-              date: date.value,
-              wins: wins.value,
-              losses: losses.value,
-              push: push.value,
-              roi: roi.value
-            }
-          })}</p>`
-        : ""
+      tipsters: mockTipsters
+      // selectedTipster: this.tipsterToSelectOption(mockTipsters[0])
     });
+
+    // @ts-ignore
+    // let url = ENV_URL[envOption.value].replace("{repub}", repubOption.value);
+    //
+    // fetch(url)
+    //   .then(response => response.json())
+    //   .then(({ tipsters }) => {
+    //     this.setState({ tipsters, selectedTipster: tipsters[0] });
+    //   })
+    //   .catch(e => {
+    //     console.log("Failed to fetch tipsters. ", e);
+    //   });
+  };
+
+  private handleChange = (key: string, selectedItem: IReactSelectItem) => {
+    this.setState<never>(
+      {
+        [key]: selectedItem
+      },
+      this.fetchTipsters
+    );
+  };
+
+  private tipsterToSelectOption = ({ authorId, name }: ITipster) => ({
+    value: authorId,
+    label: name
+  });
+
+  private getSelectedTipsterStats = () => {
+    const { tipsters, selectedTipster } = this.state;
+    const tipsterData = tipsters.find(
+      tipster => tipster.authorId === selectedTipster?.value
+    );
+
+    if (!tipsterData) return;
+
+    const { stats } = tipsterData;
+
+    return (
+      <StatsGrid>
+        <GridHeader>Date</GridHeader>
+        <GridHeader>Wins</GridHeader>
+        <GridHeader>Losses</GridHeader>
+        <GridHeader>Push</GridHeader>
+        <GridHeader>ROI</GridHeader>
+        {stats.map(({ date, wins, losses, push, roi }) => (
+          <>
+            <GridCell>{date}</GridCell>
+            <GridCell>{wins}</GridCell>
+            <GridCell>{losses}</GridCell>
+            <GridCell>{push}</GridCell>
+            <GridCell>{roi}</GridCell>
+          </>
+        ))}
+      </StatsGrid>
+    );
   };
 
   public render() {
     const {
-      avatarURL,
-      fullName,
-      socialMediaURL,
-      username,
-      bio,
-      stats,
-      payload
+      // stats,
+      // payload
+      selectedEnv,
+      selectedRepub,
+      selectedTipster,
+      tipsters
     } = this.state;
 
     return (
       <>
-        <Row
-          component={INPUT}
-          label="Full name"
-          changeHandler={value => this.handleDetailChange("fullName", value)}
-          isValid={fullName.isValid}
-          placeholder="Ben Rolfe"
-          value={fullName.value}
-        />
-        <Row
-          component={INPUT}
-          label="Social media URL"
-          changeHandler={value =>
-            this.handleDetailChange("socialMediaURL", value)
-          }
-          isValid={socialMediaURL.isValid}
-          placeholder="https://twitter.com/benrolfe15"
-          value={socialMediaURL.value}
-        />
-        <Row
-          component={INPUT}
-          label="Username"
-          changeHandler={value => this.handleDetailChange("username", value)}
-          isValid={username.isValid}
-          placeholder="@benrolfe15"
-          value={username.value}
-        />
-        <Row
-          component={INPUT}
-          label="Avatar URL"
-          changeHandler={value => this.handleDetailChange("avatarURL", value)}
-          isValid={avatarURL.isValid}
-          placeholder="https://pbs.twimg.com/profile_images/1176747891563667458/PyTXtfBl_400x400.jpg"
-          value={avatarURL.value}
-        />
-        <Row
-          component={INPUT}
-          label="Bio"
-          changeHandler={value => this.handleDetailChange("bio", value)}
-          isValid={bio.isValid}
-          placeholder="Head of NFL Content - The Touchdown NFL, Editor at Pro Football Network and RotoBaller. Writer at Oddschecker US, Pro Football Network."
-          value={bio.value}
-        />
-        <Separator />
-        <Row
-          component={INPUT}
-          label="Date"
-          changeHandler={value => this.handleStatChange("date", value)}
-          isValid={stats.date.isValid}
-          placeholder="Nov 2019"
-          value={stats.date.value}
-        />
-        <Row
-          component={INPUT}
-          label="Wins"
-          changeHandler={value => this.handleStatChange("wins", value)}
-          isValid={stats.wins.isValid}
-          type="number"
-          value={stats.wins.value}
-        />
-        <Row
-          component={INPUT}
-          label="Losses"
-          changeHandler={value => this.handleStatChange("losses", value)}
-          isValid={stats.losses.isValid}
-          type="number"
-          value={stats.losses.value}
-        />
-        <Row
-          component={INPUT}
-          label="Push"
-          changeHandler={value => this.handleStatChange("push", value)}
-          isValid={stats.push.isValid}
-          type="number"
-          value={stats.push.value}
-        />
-        <Row
-          component={INPUT}
-          label="ROI"
-          changeHandler={value => this.handleStatChange("roi", value)}
-          isValid={stats.roi.isValid}
-          placeholder="22.2%"
-          value={stats.roi.value}
-        />
+        <ConfigGrid>
+          <GenericSelector
+            value={selectedEnv}
+            handleChange={value => this.handleChange("selectedEnv", value)}
+            options={environments}
+          />
+          <GenericSelector
+            value={selectedRepub}
+            handleChange={value => this.handleChange("selectedRepub", value)}
+            options={repubs}
+          />
 
-        {!payload && (
+          {!!tipsters.length && (
+            <GenericSelector
+              value={selectedTipster}
+              handleChange={value =>
+                this.handleChange("selectedTipster", value)
+              }
+              options={tipsters.map(this.tipsterToSelectOption)}
+            />
+          )}
+        </ConfigGrid>
+
+        <Separator />
+
+        {selectedTipster && this.getSelectedTipsterStats()}
+        {/* <GenericSelector
+          value={null}
+          handleChange={() => {}}
+          options={this.tipsters}
+        /> */}
+        {/* {!payload && (
           <ErrorMessage>
             All the fields above must contain a value to generate Tipster
           </ErrorMessage>
         )}
 
-        <Preview value={payload} />
+        <Preview value={payload} /> */}
       </>
     );
   }
 }
+
+// styles
 
 export default Tipster;
