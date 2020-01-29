@@ -7,8 +7,10 @@ export const ErrorMessage = styled.p`
   text-align: right;
 `;
 
-export const Separator = styled.hr`
-  margin: 20px 0;
+export const Separator = styled.div`
+  height: 1px;
+  background: ${props => props.theme.colours.rosita};
+  margin: 20px;
 `;
 
 export const ConfigGrid = styled.div`
@@ -20,21 +22,25 @@ export const ConfigGrid = styled.div`
 
 export const StatsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: 2fr repeat(4, 1fr);
   grid-template-rows: repeat(2, 1fr);
   grid-auto-rows: 1fr;
   margin-top: 20px;
-  border-top: solid 1px ${props => props.theme.colours.tipsterGrey};
-  border-left: solid 1px ${props => props.theme.colours.tipsterGrey};
+
+  @media (min-width: 600px) {
+    grid-template-columns: repeat(5, 1fr);
+  }
 `;
 
-export const GridCell = styled.div`
+export const GridCell = styled.input`
+  font-size: 16px;
+  padding: 8px;
+  display: flex;
+  min-width: 20px;
+`;
+
+export const GridHeader = styled.div`
   padding: 10px;
-  border-right: solid 1px ${props => props.theme.colours.tipsterGrey};
-  border-bottom: solid 1px ${props => props.theme.colours.tipsterGrey};
-`;
-
-export const GridHeader = styled(GridCell)`
   background: ${props => props.theme.colours.grover};
   color: white;
 `;
