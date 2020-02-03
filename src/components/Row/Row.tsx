@@ -1,6 +1,6 @@
 import React from "react";
 import { StyledRow } from "./Row.styles";
-import { StyledButton } from "../common/button/Button.styles";
+import { StyledButton } from "../common/Button/Button.styles";
 import { TEXT_AREA } from "../../utils/constants";
 import TextArea from "../common/TextArea";
 import Input from "../common/Input";

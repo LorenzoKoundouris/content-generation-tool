@@ -8,4 +8,8 @@ export const StyledTextArea = styled.textarea`
   cursor: text;
   font-size: 16px;
   border-radius: 5px;
+
+  &.invalid {
+    border: 2px solid red;
+  }
 `;

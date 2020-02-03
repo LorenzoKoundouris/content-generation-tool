@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Row from "../../components/Row";
-import Preview from "../../components/Preview";
+import TextAreaWithCTA from "../../components/TextAreaWithCTA";
 import { TEXT_AREA } from "../../utils/constants";
+import { UsageType } from "../../components/TextAreaWithCTA/TextAreaWithCTA";
 
 function YouTube() {
   const [youTubeEmbed, setYouTubeEmbed] = useState("");
@@ -24,7 +25,7 @@ function YouTube() {
         rows={5}
       />
 
-      <Preview value={payload} />
+      {/* <TextAreaWithCTA value={payload} type={UsageType.PREVIEW} /> */}
     </div>
   );
 }

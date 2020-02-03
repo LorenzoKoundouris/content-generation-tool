@@ -1,130 +1,46 @@
 import React from "react";
 
-import Preview from "../../components/Preview";
-import {
-  ErrorMessage,
-  ConfigGrid,
-  StatsGrid,
-  GridHeader,
-  Separator,
-  GridCell
-} from "./Tipster.styles";
-import GenericSelector from "../../components/GenericSelector";
-import IReactSelectItem from "../../interfaces/i-react-select-item";
-import { ITipster } from "../../interfaces/i-tipster";
+import TextAreaWithCTA from "../../components/TextAreaWithCTA";
+import { StatsGrid, GridHeader, Separator, GridCell } from "./Tipster.styles";
 import { IStatRecord } from "../../interfaces/i-stat-record";
+import { UsageType } from "../../components/TextAreaWithCTA/TextAreaWithCTA";
 
 interface IAppState {
-  selectedEnvOption: IReactSelectItem | null;
-  selectedRepubOption: IReactSelectItem | null;
-  selectedTipsterOption: IReactSelectItem | null;
-  selectedTipster: ITipster | null;
-  tipsters: ITipster[];
+  invalid: boolean;
+  pastedStats: string;
+  payload: null | string;
+  stats: IStatRecord[];
 }
-
-const environments = [
-  { value: "dev", label: "DEV" },
-  { value: "stg", label: "STG" },
-  { value: "prod", label: "PROD" }
-];
-
-const repubs = [
-  { value: "us", label: "US" },
-  { value: "it", label: "IT" },
-  { value: "es", label: "ES" },
-  { value: "au", label: "AU" }
-];
-
-enum ENV_URL {
-  dev = "https://www.dev.occloud.io/{repub}/show-all-tipsters-data",
-  stg = "https://www.stg.occloud.io/{repub}/show-all-tipsters-data",
-  prod = "https://www.oddschecker.com/{repub}/show-all-tipsters-data"
-}
-
-const mockTipsters = [
-  {
-    name: "John Doe",
-    authorId: "1",
-    stats:
-      '[{"date":"2019-10-01","wins":21,"losses":5,"push":1,"roi":"22.2%"},{"date":"2019-09-01","wins":20,"losses":4,"push":1,"roi":"21.2%"},{"date":"2019-08-01","wins":19,"losses":3,"push":1,"roi":"20.2%"}]'
-  },
-  {
-    name: "Aleksandra Marszalek",
-    authorId: "666",
-    stats:
-      '[{"date":"2019-10-01","wins":21,"losses":5,"push":1,"roi":"22.2%"},{"date":"2019-09-01","wins":20,"losses":4,"push":1,"roi":"21.2%"},{"date":"2019-08-01","wins":19,"losses":3,"push":1,"roi":"20.2%"}]'
-  },
-  {
-    name: "Ryan Elliott",
-    authorId: "614",
-    stats:
-      '[{"date":"2019-10-01","wins":21,"losses":5,"push":1,"roi":"22.2%"},{"date":"2019-09-01","wins":20,"losses":4,"push":1,"roi":"21.2%"},{"date":"2019-08-01","wins":19,"losses":3,"push":1,"roi":"20.2%"}]'
-  }
-];
 
 class Tipster extends React.Component<any, IAppState> {
   constructor(props: any) {
     super(props);
 
     this.state = {
-      selectedEnvOption: null,
-      selectedRepubOption: null,
-      selectedTipsterOption: null,
-      selectedTipster: null,
-      tipsters: []
+      invalid: false,
+      pastedStats: "",
+      payload: null,
+      stats: []
     };
   }
 
-  private fetchTipsters = () => {
-    const {
-      selectedEnvOption: envOption,
-      selectedRepubOption: repubOption
-    } = this.state;
-    if (!envOption || !repubOption) return;
-
-    //mock
-    this.setState({
-      tipsters: mockTipsters.map((tipster: any) => ({
-        ...tipster,
-        stats: JSON.parse(tipster.stats)
-      })) as ITipster[]
-    });
-
-    // // @ts-ignore
-    // let url = ENV_URL[envOption.value].replace("{repub}", repubOption.value);
-
-    // fetch(url)
-    //   .then(response => response.json())
-    //   .then(({ tipsters }) => {
-    //     this.setState({
-    //       tipsters: tipsters.map((tipster: any) => ({
-    //         ...tipster,
-    //         stats: JSON.parse(tipster.stats)
-    //       })),
-    //       selectedTipster: tipsters[0]
-    //     });
-    //   })
-    //   .catch(e => {
-    //     console.log("Failed to fetch tipsters. ", e);
-    //   });
-  };
-
-  // private handleChange = (key: string, selectedItem: IReactSelectItem) => {
-  //   this.setState<never>(
-  //     {
-  //       [key]: selectedItem
-  //     },
-  //     this.fetchTipsters
-  //   );
-  // };
+  private getErrorMessage = (error: string) =>
+    `Invalid input. Error: ${error}\n\nPlease check that the stats resemble the following example ${JSON.stringify(
+      [
+        { date: "2019-10-01", wins: 21, losses: 5, push: 1, roi: "22.2%" },
+        { date: "2019-09-01", wins: 20, losses: 4, push: 1, roi: "21.2%" },
+        { date: "2019-08-01", wins: 19, losses: 3, push: 1, roi: "20.2%" }
+      ],
+      null,
+      4
+    )}`;
 
   private handleStatChange = (
     id: string,
     evt: React.ChangeEvent<HTMLInputElement>,
     type: "number" | "string" = "string"
   ) => {
-    const { selectedTipster } = this.state;
-    const stats = selectedTipster?.stats || [];
+    const { stats } = this.state;
     const [date, key] = id.split("_");
     const getTypedValue = (value: string) =>
       type === "number" ? Number(value) : value;
@@ -132,38 +48,20 @@ class Tipster extends React.Component<any, IAppState> {
       ...stat,
       [key]: getTypedValue(evt.target.value)
     });
-
-    this.setState({
-      selectedTipster: {
-        ...selectedTipster,
-        stats: stats.map(stat =>
-          stat.date === date ? getUpdatedStat(stat) : stat
-        )
-      } as ITipster
-    });
+    debugger;
+    // this.setState({
+    //   selectedTipster: {
+    //     ...selectedTipster,
+    //     stats: stats.map(stat =>
+    //       stat.date === date ? getUpdatedStat(stat) : stat
+    //     )
+    //   } as ITipster
+    // });
   };
-
-  private handleTipsterChange = (selectedTipsterOption: IReactSelectItem) => {
-    const { tipsters } = this.state;
-    const selectedTipster = tipsters.find(
-      tipster => tipster.authorId === selectedTipsterOption.value
-    );
-
-    this.setState({
-      selectedTipster: selectedTipster || null,
-      selectedTipsterOption
-    });
-  };
-
-  private tipsterToSelectOption = ({ authorId, name }: ITipster) => ({
-    value: authorId,
-    label: name
-  });
 
   private renderTipsterStats = () => {
-    const { selectedTipster } = this.state;
-    if (!selectedTipster || !selectedTipster.stats) return;
-    const { stats } = selectedTipster;
+    const { stats } = this.state;
+    if (!stats) return;
 
     return (
       <StatsGrid>
@@ -215,67 +113,74 @@ class Tipster extends React.Component<any, IAppState> {
     );
   };
 
+  private parsePastedStats = () => {
+    const { pastedStats } = this.state;
+
+    try {
+      const parsedStats: IStatRecord[] = JSON.parse(pastedStats);
+      if (!Array.isArray(parsedStats)) throw "Tipster Stats not an array";
+
+      this.setState(
+        {
+          stats: parsedStats,
+          payload: pastedStats.replace(" ", ""),
+          invalid: false
+        },
+        () => console.log("3. state", this.state)
+      );
+    } catch (error) {
+      this.setState({
+        payload: this.getErrorMessage(error),
+        invalid: true
+      });
+    }
+  };
+
+  private handlePaste = () => {
+    console.log("1. reached handlePaste");
+    navigator.clipboard.readText().then(
+      clipText => {
+        console.log("2. read pasted", clipText);
+        this.setState({ pastedStats: clipText }, this.parsePastedStats);
+      },
+      e => console.log("clipboard read failed", e)
+    );
+  };
+
+  private handleCopy = (clipboardText: string) => {
+    navigator.clipboard.writeText(clipboardText).then(
+      e => console.log("clipboard successfully set", e),
+      e => console.log("clipboard write failed", e)
+    );
+  };
+
   public render() {
-    const {
-      selectedEnvOption,
-      selectedRepubOption,
-      selectedTipsterOption,
-      selectedTipster,
-      tipsters
-    } = this.state;
+    const { invalid, pastedStats, payload, stats } = this.state;
 
     return (
       <>
-        <ConfigGrid>
-          <GenericSelector
-            value={selectedEnvOption}
-            handleChange={value =>
-              this.setState({ selectedEnvOption: value }, this.fetchTipsters)
-            }
-            options={environments}
-          />
-
-          <GenericSelector
-            value={selectedRepubOption}
-            handleChange={value =>
-              this.setState({ selectedRepubOption: value }, this.fetchTipsters)
-            }
-            options={repubs}
-          />
-
-          {!!tipsters.length && (
-            <GenericSelector
-              value={selectedTipsterOption}
-              handleChange={this.handleTipsterChange}
-              options={tipsters.map(this.tipsterToSelectOption)}
-            />
-          )}
-        </ConfigGrid>
+        <TextAreaWithCTA
+          value={pastedStats}
+          type={UsageType.INPUT}
+          ctaHandler={this.handlePaste}
+          invalid={invalid}
+        />
 
         <Separator />
 
-        {selectedTipster?.stats && (
-          <>
-            {this.renderTipsterStats()}
-            <Preview value={JSON.stringify(selectedTipster.stats)} />
-          </>
-        )}
+        {!!stats.length && !invalid && this.renderTipsterStats()}
 
-        {/* <GenericSelector
-          value={null}
-          handleChange={() => {}}
-          options={this.tipsters}
-        /> */}
-        {/* {!payload && (
-          <ErrorMessage>
-            All the fields above must contain a value to generate Tipster
-          </ErrorMessage>
-        )} */}
+        {payload !== null && (
+          <TextAreaWithCTA
+            value={payload}
+            type={UsageType.PREVIEW}
+            ctaHandler={this.handleCopy}
+            invalid={invalid}
+          />
+        )}
       </>
     );
   }
 }
-
-// styles
 
 export default Tipster;

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Row from "../../components/Row";
-import Preview from "../../components/Preview";
+import TextAreaWithCTA from "../../components/TextAreaWithCTA";
 import { INPUT } from "../../utils/constants";
+import { UsageType } from "../../components/TextAreaWithCTA/TextAreaWithCTA";
 
 function Twitter() {
   const [twitterURL, setTwitterURL] = useState("");
@@ -23,7 +24,7 @@ function Twitter() {
         value={twitterURL}
       />
 
-      <Preview value={payload} />
+      {/* <TextAreaWithCTA value={payload} type={UsageType.PREVIEW} /> */}
     </div>
   );
 }
