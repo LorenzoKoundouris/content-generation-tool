@@ -5,7 +5,7 @@ import {
   StyledHeader
 } from "./TextAreaWithCTA.styles";
 import { StyledButton } from "../common/Button/Button.styles";
-import { StyledTextArea } from "../common/TextArea/TextArea.styles";
+import TextArea from "../common/TextArea";
 
 interface ITextAreaProps {
   value: string;
@@ -14,21 +14,15 @@ interface ITextAreaProps {
   handleChange?: (value: string) => void;
 }
 
-type CopyHandler = (clipboardText: string) => void;
-type PasteHandler = () => void;
-
 export enum UsageType {
   INPUT = "input",
   PREVIEW = "preview"
 }
 
-class TextAreaWithCTA extends React.Component<ITextAreaProps> {
-  constructor(props: ITextAreaProps) {
-    super(props);
-  }
+function TextAreaWithCTA(props: ITextAreaProps) {
+  const { invalid, handleChange, value, type } = props;
 
-  private handlePaste = () => {
-    const { handleChange } = this.props;
+  const handlePaste = () => {
     if (!handleChange) return;
 
     navigator.clipboard.readText().then(
@@ -37,40 +31,34 @@ class TextAreaWithCTA extends React.Component<ITextAreaProps> {
     );
   };
 
-  private handleCopy = (clipboardText: string) => {
+  const handleCopy = (clipboardText: string) => {
     navigator.clipboard.writeText(clipboardText).then(
       e => console.log("clipboard successfully set", e),
       e => console.log("clipboard write failed", e)
     );
   };
 
-  public render(): JSX.Element {
-    const { invalid, value, type } = this.props;
+  return (
+    <TextAreaContainer>
+      <StyledHeader>{type}</StyledHeader>
+      <Content>
+        <TextArea
+          className={invalid ? "invalid" : ""}
+          value={value}
+          rows={10}
+          readOnly
+        />
 
-    return (
-      <TextAreaContainer>
-        <StyledHeader>{type}</StyledHeader>
-        <Content>
-          <StyledTextArea
-            className={invalid ? "invalid" : ""}
-            value={value}
-            rows={10}
-            readOnly
-          />
+        {type === UsageType.INPUT && (
+          <StyledButton onClick={handlePaste}>Paste</StyledButton>
+        )}
 
-          {type === UsageType.INPUT && (
-            <StyledButton onClick={this.handlePaste}>Paste</StyledButton>
-          )}
-
-          {type === UsageType.PREVIEW && !invalid && (
-            <StyledButton onClick={() => this.handleCopy(value)}>
-              Copy
-            </StyledButton>
-          )}
-        </Content>
-      </TextAreaContainer>
-    );
-  }
+        {type === UsageType.PREVIEW && !invalid && (
+          <StyledButton onClick={() => handleCopy(value)}>Copy</StyledButton>
+        )}
+      </Content>
+    </TextAreaContainer>
+  );
 }
 
 export default TextAreaWithCTA;

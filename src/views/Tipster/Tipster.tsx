@@ -117,16 +117,15 @@ class Tipster extends React.Component<any, IAppState> {
 
     try {
       const parsedStats: IStatRecord[] = JSON.parse(pastedStats);
-      if (!Array.isArray(parsedStats)) throw "Tipster Stats not an array";
+      if (!Array.isArray(parsedStats)) {
+        throw new Error("Tipster Stats not an array");
+      }
 
-      this.setState(
-        {
-          stats: parsedStats,
-          payload: pastedStats.replace(" ", ""),
-          invalid: false
-        },
-        () => console.log("3. state", this.state)
-      );
+      this.setState({
+        stats: parsedStats,
+        payload: pastedStats.replace(/\s/g, ""),
+        invalid: false
+      });
     } catch (error) {
       this.setState({
         payload: this.getErrorMessage(error),
