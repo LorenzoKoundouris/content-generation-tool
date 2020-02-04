@@ -8,7 +8,9 @@ import * as serviceWorker from "./serviceWorker";
 const theme = {
   headerHeight: "70px",
   colours: {
-    grover: "#033954"
+    grover: "#033954",
+    tipsterGrey: "#6f6c6c",
+    rosita: "#00dd99"
   }
 };
 

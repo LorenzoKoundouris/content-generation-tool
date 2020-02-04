@@ -1,31 +1,15 @@
 import React from "react";
 
-import Row from "../../components/Row";
-import Preview from "../../components/Preview";
-import { ErrorMessage, Separator } from "./Tipster.styles";
-import { INPUT } from "../../utils/constants";
-
-interface InputField {
-  value: string | number;
-  isValid: boolean;
-}
-
-interface IStats {
-  date: InputField;
-  wins: InputField;
-  losses: InputField;
-  push: InputField;
-  roi: InputField;
-}
+import TextAreaWithCTA from "../../components/TextAreaWithCTA";
+import { StatsGrid, GridHeader, Separator, GridCell } from "./Tipster.styles";
+import { IStatRecord } from "../../interfaces/i-stat-record";
+import { UsageType } from "../../components/TextAreaWithCTA/TextAreaWithCTA";
 
 interface IAppState {
-  fullName: InputField;
-  socialMediaURL: InputField;
-  username: InputField;
-  avatarURL: InputField;
-  bio: InputField;
-  stats: IStats;
-  payload: string;
+  invalid: boolean;
+  pastedStats: string;
+  payload: null | string;
+  stats: IStatRecord[];
 }
 
 class Tipster extends React.Component<any, IAppState> {
@@ -33,225 +17,146 @@ class Tipster extends React.Component<any, IAppState> {
     super(props);
 
     this.state = {
-      fullName: {
-        value: "",
-        isValid: false
-      },
-      socialMediaURL: {
-        value: "",
-        isValid: false
-      },
-      username: {
-        value: "",
-        isValid: false
-      },
-      avatarURL: {
-        value: "",
-        isValid: false
-      },
-      stats: {
-        date: {
-          value: "",
-          isValid: false
-        },
-        wins: {
-          value: 0,
-          isValid: false
-        },
-        losses: {
-          value: 0,
-          isValid: false
-        },
-        push: {
-          value: 0,
-          isValid: false
-        },
-        roi: {
-          value: "",
-          isValid: false
-        }
-      },
-      bio: {
-        value: "",
-        isValid: false
-      },
-      payload: ""
+      invalid: false,
+      pastedStats: "",
+      payload: null,
+      stats: []
     };
   }
 
-  private handleDetailChange = (key: string, changedDetail: string) => {
-    this.setState<never>(
-      {
-        [key]: {
-          value: changedDetail,
-          isValid: !!changedDetail
-        }
-      },
-      this.validateForm
-    );
-  };
+  private getErrorMessage = (error: string) =>
+    `Invalid input. Error: ${error}\n\nPlease check that the stats resemble the following example\n${JSON.stringify(
+      [
+        { date: "2019-10-01", wins: 21, losses: 5, push: 1, roi: "22.2%" },
+        { date: "2019-09-01", wins: 20, losses: 4, push: 1, roi: "21.2%" },
+        { date: "2019-08-01", wins: 19, losses: 3, push: 1, roi: "20.2%" }
+      ],
+      null,
+      4
+    )}`;
 
-  private handleStatChange = (key: string, changedStat: string) => {
-    const updatedStats = Object.assign(this.state.stats, {
-      [key]: {
-        value: changedStat,
-        isValid: !!changedStat
-      }
+  private handleStatChange = (
+    id: string,
+    evt: React.ChangeEvent<HTMLInputElement>,
+    type: "number" | "string" = "string"
+  ) => {
+    const { stats } = this.state;
+    const [date, key] = id.split("_");
+    const getTypedValue = (value: string) =>
+      type === "number" ? Number(value) : value;
+    const getUpdatedStat = (stat: IStatRecord) => ({
+      ...stat,
+      [key]: getTypedValue(evt.target.value)
     });
-
-    this.setState<never>(
-      {
-        stats: updatedStats
-      },
-      this.validateForm
+    const updatedStats = stats.map(stat =>
+      stat.date === date ? getUpdatedStat(stat) : stat
     );
-  };
-
-  private validateForm = () => {
-    const {
-      fullName,
-      socialMediaURL,
-      username,
-      avatarURL,
-      bio,
-      stats: { date, wins, losses, push, roi }
-    } = this.state;
-    const isValidForm =
-      fullName.isValid &&
-      socialMediaURL.isValid &&
-      username.isValid &&
-      avatarURL.isValid &&
-      bio.isValid &&
-      date.isValid &&
-      wins.isValid &&
-      losses.isValid &&
-      push.isValid &&
-      roi.isValid;
 
     this.setState({
-      payload: isValidForm
-        ? `<p name="tipster">${JSON.stringify({
-            fullName: fullName.value,
-            socialMediaURL: socialMediaURL.value,
-            username: username.value,
-            avatarURL: avatarURL.value,
-            bio: bio.value,
-            stats: {
-              date: date.value,
-              wins: wins.value,
-              losses: losses.value,
-              push: push.value,
-              roi: roi.value
-            }
-          })}</p>`
-        : ""
+      stats: updatedStats,
+      payload: JSON.stringify(updatedStats)
     });
+  };
+
+  private renderTipsterStats = () => {
+    const { stats } = this.state;
+    if (!stats) return;
+
+    return (
+      <StatsGrid>
+        <GridHeader>Date</GridHeader>
+        <GridHeader>Wins</GridHeader>
+        <GridHeader>Losses</GridHeader>
+        <GridHeader>Push</GridHeader>
+        <GridHeader>ROI</GridHeader>
+        {stats.map(({ date, wins, losses, push, roi }) => (
+          <>
+            <GridCell
+              key={date}
+              type="date"
+              defaultValue={date}
+              onChange={evt => this.handleStatChange(`${date}_date`, evt)}
+            />
+            <GridCell
+              key={`${date}-${wins}`}
+              type="number"
+              defaultValue={wins}
+              onChange={evt =>
+                this.handleStatChange(`${date}_wins`, evt, "number")
+              }
+            />
+            <GridCell
+              key={`${date}-${losses}`}
+              type="number"
+              defaultValue={losses}
+              onChange={evt =>
+                this.handleStatChange(`${date}_losses`, evt, "number")
+              }
+            />
+            <GridCell
+              key={`${date}-${push}`}
+              type="number"
+              defaultValue={push}
+              onChange={evt =>
+                this.handleStatChange(`${date}_push`, evt, "number")
+              }
+            />
+            <GridCell
+              key={`${date}-${roi}`}
+              defaultValue={roi}
+              onChange={evt => this.handleStatChange(`${date}_roi`, evt)}
+            />
+          </>
+        ))}
+      </StatsGrid>
+    );
+  };
+
+  private handleChange = (pastedStats: string) => {
+    this.setState({ pastedStats });
+
+    try {
+      const parsedStats: IStatRecord[] = JSON.parse(pastedStats);
+      if (!Array.isArray(parsedStats)) {
+        throw new Error("Tipster Stats not an array");
+      }
+
+      this.setState({
+        stats: parsedStats,
+        payload: pastedStats.replace(/\s/g, ""),
+        invalid: false
+      });
+    } catch (error) {
+      this.setState({
+        payload: this.getErrorMessage(error),
+        invalid: true
+      });
+    }
   };
 
   public render() {
-    const {
-      avatarURL,
-      fullName,
-      socialMediaURL,
-      username,
-      bio,
-      stats,
-      payload
-    } = this.state;
+    const { invalid, pastedStats, payload, stats } = this.state;
 
     return (
       <>
-        <Row
-          component={INPUT}
-          label="Full name"
-          changeHandler={value => this.handleDetailChange("fullName", value)}
-          isValid={fullName.isValid}
-          placeholder="Ben Rolfe"
-          value={fullName.value}
+        <TextAreaWithCTA
+          value={pastedStats}
+          type={UsageType.INPUT}
+          handleChange={this.handleChange}
+          invalid={invalid}
         />
-        <Row
-          component={INPUT}
-          label="Social media URL"
-          changeHandler={value =>
-            this.handleDetailChange("socialMediaURL", value)
-          }
-          isValid={socialMediaURL.isValid}
-          placeholder="https://twitter.com/benrolfe15"
-          value={socialMediaURL.value}
-        />
-        <Row
-          component={INPUT}
-          label="Username"
-          changeHandler={value => this.handleDetailChange("username", value)}
-          isValid={username.isValid}
-          placeholder="@benrolfe15"
-          value={username.value}
-        />
-        <Row
-          component={INPUT}
-          label="Avatar URL"
-          changeHandler={value => this.handleDetailChange("avatarURL", value)}
-          isValid={avatarURL.isValid}
-          placeholder="https://pbs.twimg.com/profile_images/1176747891563667458/PyTXtfBl_400x400.jpg"
-          value={avatarURL.value}
-        />
-        <Row
-          component={INPUT}
-          label="Bio"
-          changeHandler={value => this.handleDetailChange("bio", value)}
-          isValid={bio.isValid}
-          placeholder="Head of NFL Content - The Touchdown NFL, Editor at Pro Football Network and RotoBaller. Writer at Oddschecker US, Pro Football Network."
-          value={bio.value}
-        />
+
         <Separator />
-        <Row
-          component={INPUT}
-          label="Date"
-          changeHandler={value => this.handleStatChange("date", value)}
-          isValid={stats.date.isValid}
-          placeholder="Nov 2019"
-          value={stats.date.value}
-        />
-        <Row
-          component={INPUT}
-          label="Wins"
-          changeHandler={value => this.handleStatChange("wins", value)}
-          isValid={stats.wins.isValid}
-          type="number"
-          value={stats.wins.value}
-        />
-        <Row
-          component={INPUT}
-          label="Losses"
-          changeHandler={value => this.handleStatChange("losses", value)}
-          isValid={stats.losses.isValid}
-          type="number"
-          value={stats.losses.value}
-        />
-        <Row
-          component={INPUT}
-          label="Push"
-          changeHandler={value => this.handleStatChange("push", value)}
-          isValid={stats.push.isValid}
-          type="number"
-          value={stats.push.value}
-        />
-        <Row
-          component={INPUT}
-          label="ROI"
-          changeHandler={value => this.handleStatChange("roi", value)}
-          isValid={stats.roi.isValid}
-          placeholder="22.2%"
-          value={stats.roi.value}
-        />
 
-        {!payload && (
-          <ErrorMessage>
-            All the fields above must contain a value to generate Tipster
-          </ErrorMessage>
+        {!!stats.length && !invalid && this.renderTipsterStats()}
+
+        {payload !== null && (
+          <TextAreaWithCTA
+            value={payload}
+            type={UsageType.PREVIEW}
+            invalid={invalid}
+          />
         )}
-
-        <Preview value={payload} />
       </>
     );
   }

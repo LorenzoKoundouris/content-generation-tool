@@ -1,6 +1,6 @@
 import React from "react";
 import { StyledRow } from "./Row.styles";
-import { StyledButton } from "../common/button/Button.styles";
+import { StyledButton } from "../common/Button/Button.styles";
 import { TEXT_AREA } from "../../utils/constants";
 import TextArea from "../common/TextArea";
 import Input from "../common/Input";
@@ -8,7 +8,7 @@ import Input from "../common/Input";
 interface IRowGenericProps {
   component: ComponentType;
   changeHandler: (changedValue: string) => void;
-  isValid: boolean;
+  invalid: boolean;
   label: string;
   placeholder?: string;
   value: string | number;
@@ -36,8 +36,8 @@ class Row extends React.Component<IRowInputProps | IRowTextAreaProps> {
   };
 
   private getComponentByType() {
-    const { component, changeHandler, isValid, ...otherProps } = this.props;
-    const className = isValid ? "" : "error";
+    const { component, changeHandler, invalid, ...otherProps } = this.props;
+    const className = invalid ? "error" : "";
     const Component = component === TEXT_AREA ? TextArea : Input;
 
     return (
