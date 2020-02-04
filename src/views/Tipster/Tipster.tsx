@@ -25,7 +25,7 @@ class Tipster extends React.Component<any, IAppState> {
   }
 
   private getErrorMessage = (error: string) =>
-    `Invalid input. Error: ${error}\n\nPlease check that the stats resemble the following example ${JSON.stringify(
+    `Invalid input. Error: ${error}\n\nPlease check that the stats resemble the following example\n${JSON.stringify(
       [
         { date: "2019-10-01", wins: 21, losses: 5, push: 1, roi: "22.2%" },
         { date: "2019-09-01", wins: 20, losses: 4, push: 1, roi: "21.2%" },
@@ -48,15 +48,14 @@ class Tipster extends React.Component<any, IAppState> {
       ...stat,
       [key]: getTypedValue(evt.target.value)
     });
-    debugger;
-    // this.setState({
-    //   selectedTipster: {
-    //     ...selectedTipster,
-    //     stats: stats.map(stat =>
-    //       stat.date === date ? getUpdatedStat(stat) : stat
-    //     )
-    //   } as ITipster
-    // });
+    const updatedStats = stats.map(stat =>
+      stat.date === date ? getUpdatedStat(stat) : stat
+    );
+
+    this.setState({
+      stats: updatedStats,
+      payload: JSON.stringify(updatedStats)
+    });
   };
 
   private renderTipsterStats = () => {
@@ -113,8 +112,8 @@ class Tipster extends React.Component<any, IAppState> {
     );
   };
 
-  private parsePastedStats = () => {
-    const { pastedStats } = this.state;
+  private handleChange = (pastedStats: string) => {
+    this.setState({ pastedStats });
 
     try {
       const parsedStats: IStatRecord[] = JSON.parse(pastedStats);
@@ -136,24 +135,6 @@ class Tipster extends React.Component<any, IAppState> {
     }
   };
 
-  private handlePaste = () => {
-    console.log("1. reached handlePaste");
-    navigator.clipboard.readText().then(
-      clipText => {
-        console.log("2. read pasted", clipText);
-        this.setState({ pastedStats: clipText }, this.parsePastedStats);
-      },
-      e => console.log("clipboard read failed", e)
-    );
-  };
-
-  private handleCopy = (clipboardText: string) => {
-    navigator.clipboard.writeText(clipboardText).then(
-      e => console.log("clipboard successfully set", e),
-      e => console.log("clipboard write failed", e)
-    );
-  };
-
   public render() {
     const { invalid, pastedStats, payload, stats } = this.state;
 
@@ -162,7 +143,7 @@ class Tipster extends React.Component<any, IAppState> {
         <TextAreaWithCTA
           value={pastedStats}
           type={UsageType.INPUT}
-          ctaHandler={this.handlePaste}
+          handleChange={this.handleChange}
           invalid={invalid}
         />
 
@@ -174,7 +155,6 @@ class Tipster extends React.Component<any, IAppState> {
           <TextAreaWithCTA
             value={payload}
             type={UsageType.PREVIEW}
-            ctaHandler={this.handleCopy}
             invalid={invalid}
           />
         )}

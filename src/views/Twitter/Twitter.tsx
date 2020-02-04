@@ -19,12 +19,16 @@ function Twitter() {
         component={INPUT}
         label="Twitter URL"
         changeHandler={setTwitterURL}
-        isValid={!!twitterURL}
+        invalid={!twitterURL}
         placeholder="https://twitter.com/OddscheckerUS/status/1207625525029752833"
         value={twitterURL}
       />
 
-      {/* <TextAreaWithCTA value={payload} type={UsageType.PREVIEW} /> */}
+      <TextAreaWithCTA
+        value={payload}
+        type={UsageType.PREVIEW}
+        invalid={!twitterURL}
+      />
     </div>
   );
 }
