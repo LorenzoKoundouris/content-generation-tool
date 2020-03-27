@@ -1,3 +1,4 @@
+export const FLOURISH = "flourish";
 export const TIPSTER = "tipster";
 export const TWITTER = "twitter";
 export const YOUTUBE = "youtube";
