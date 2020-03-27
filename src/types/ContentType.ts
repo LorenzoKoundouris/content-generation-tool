@@ -1,1 +1,1 @@
-export type ContentType = "tipster" | "twitter" | "youtube";
+export type ContentType = "flourish" | "tipster" | "twitter" | "youtube";
