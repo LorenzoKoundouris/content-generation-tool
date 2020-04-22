@@ -16,7 +16,7 @@ function Evergreen() {
     generatePayload();
   }, [accordions]);
 
-  const generatePayload = () => {
+  const generatePayload = (): void => {
     let payload = "";
 
     accordions.forEach((accordion) => {
