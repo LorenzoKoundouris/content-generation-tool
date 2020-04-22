@@ -26,15 +26,15 @@ const AccordionContent: React.FC<IProps> = ({
     changeContent({ header, content, openByDefault }, index);
   }, [header, content, openByDefault]);
 
-  const setHeader = (headerVal: string) => {
+  const setHeader = (headerVal: string): void => {
     changeContent({ ...accordionContent, header: headerVal }, index);
   };
 
-  const setContent = (contentVal: string) => {
+  const setContent = (contentVal: string): void => {
     changeContent({ ...accordionContent, content: contentVal }, index);
   };
 
-  const toggleCheckbox = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const toggleCheckbox = (event: React.ChangeEvent<HTMLInputElement>): void => {
     changeContent(
       { ...accordionContent, openByDefault: event.target.checked },
       index
