@@ -4,14 +4,21 @@ import GenericSelector from "./components/GenericSelector";
 import IReactSelectItem from "./interfaces/i-react-select-item";
 import ContentForm from "./components/ContentForm/ContentForm";
 import Header from "./components/Header";
-import { FLOURISH, TIPSTER, TWITTER, YOUTUBE } from "./utils/constants";
+import {
+  EVERGREEN,
+  FLOURISH,
+  TIPSTER,
+  TWITTER,
+  YOUTUBE,
+} from "./utils/constants";
 import { ContentType } from "./types/ContentType";
 
 const contentTypes = [
+  { value: EVERGREEN, label: "Evergreen" },
   { value: FLOURISH, label: "Flourish" },
   { value: TIPSTER, label: "Tipster" },
   { value: TWITTER, label: "Twitter" },
-  { value: YOUTUBE, label: "YouTube" }
+  { value: YOUTUBE, label: "YouTube" },
 ];
 
 function App() {
