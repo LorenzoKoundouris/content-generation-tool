@@ -4,6 +4,7 @@ import TextAreaWithCTA from "../../components/TextAreaWithCTA";
 import { UsageType } from "../../components/TextAreaWithCTA/TextAreaWithCTA";
 
 import { Button, ButtonWrapper } from "./Evergreen.styles";
+import removeWhiteSpace from "../../utils/remove-white-space";
 
 function Evergreen() {
   const initialState = [{ header: "", content: "", openByDefault: false }];
@@ -22,8 +23,10 @@ function Evergreen() {
     accordions.forEach((accordion) => {
       payload += `<section${
         accordion.openByDefault ? ' open="true"' : ""
-      }> <h2>${accordion.header}</h2>${accordion.content}</section>`;
+      }><h2>${accordion.header}</h2>${accordion.content}</section>`;
     });
+
+    payload = removeWhiteSpace(payload);
 
     setPayload(payload);
   };
